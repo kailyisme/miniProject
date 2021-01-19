@@ -1,0 +1,2 @@
+prompt_toolkit==3.0.10
+rich==9.8.2
