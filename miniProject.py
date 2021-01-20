@@ -7,6 +7,8 @@ import os
 class Project:
     def __init__(self, nameOfProject="Project"):
         self.nameOfProject=nameOfProject
+        real_path = os.path.realpath(__file__)  #Get program file path
+        self.dir_path = os.path.dirname(real_path)  #Get dir path for program file
         self.data={}    #Initialize data Dic
     #Rich Console Style
         self.cStyle = Style(bgcolor= "thistle1", color="bright_cyan")
@@ -35,22 +37,22 @@ class Project:
     
     def readDB(self):
         nameOfProjectDB = self.nameOfProject + "DB"
-        if os.path.isdir(nameOfProjectDB):
-            for fileName in os.listdir(nameOfProjectDB):
-                with open(f"{nameOfProjectDB}/{fileName}") as file:
-                    listOfNames = fileName.split(".")[:-1]
-                    tableName = listOfNames[0]
-                    if len(listOfNames) > 1:
+        if os.path.isdir(self.dir_path + "/" + nameOfProjectDB):
+            for fileName in os.listdir(self.dir_path + "/" + nameOfProjectDB):
+                with open(f"{self.dir_path}/{nameOfProjectDB}/{fileName}") as file:
+                    listOfNames = fileName.split(".")[:-1]  #remove
+                    tableName = listOfNames[0]              #file
+                    if len(listOfNames) > 1:                #extension
                         for name in listOfNames[1:]:
                             tableName += f".{name}"
                     self.data[tableName] = [line.rstrip().split(",") for line in file]
 
     def saveDB(self):
         nameOfProjectDB = self.nameOfProject + "DB"
-        if not os.path.isdir(nameOfProjectDB):  #check if DB dir exists
-            os.mkdir(nameOfProjectDB)   #If not create DB dir
+        if not os.path.isdir(self.dir_path + "/" + nameOfProjectDB):  #check if DB dir exists
+            os.mkdir(self.dir_path + "/" + nameOfProjectDB)   #If not create DB dir
         for fileName in self.data.keys():
-            with open(f"{nameOfProjectDB}/{fileName}.txt", "w") as file:
+            with open(f"{self.dir_path}/{nameOfProjectDB}/{fileName}.txt", "w") as file:
                 for line in self.data[fileName]:
                     file.write(f"{','.join(line)}\n")
         self.clearTerm()
@@ -64,8 +66,10 @@ class Project:
 
     def showTable(self, tableName):
         self.clearTerm()
-        if not self.data.get(tableName):
+        if not tableName in self.data:
             self.c.print(f"There's no such table under the name of {tableName}", style = self.cStyle)
+        elif not self.data.get(tableName):
+            self.c.print(f"Table name: {tableName} is empty", style = self.cStyle)
         else:
             aTable = Table(title = tableName.title())
             for header in self.data[tableName][0]:
@@ -84,12 +88,14 @@ class Project:
         os.system('cls' if os.name == 'nt' else 'clear')
     
     def promptUser(self, promptText=""):
-        userInput = prompt(f"{promptText}>")
+        userInput = prompt(f"{promptText} >")
         return userInput
     
     def promptMenuOption(self, promptText="Input Menu Option"):
         self.clearTerm()
         self.printMenu()
+        # for each in self.data.items():
+        #     print(each)
         userInput = self.promptUser(promptText).lower().strip()
         if userInput == "show":
             self.promptTable()
