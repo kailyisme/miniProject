@@ -1,3 +1,2 @@
 Name
-Coca-Cola
-Shenanigans
+coke
