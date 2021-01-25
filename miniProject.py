@@ -54,7 +54,7 @@ class Project:
         if not os.path.isdir(self.dir_path + "/" + nameOfProjectDB):  #check if DB dir exists
             os.mkdir(self.dir_path + "/" + nameOfProjectDB)   #If not create DB dir
         for fileName in self.data.keys():
-            with open(f"{self.dir_path}/{nameOfProjectDB}/{fileName}.txt", "w") as file:
+            with open(f"{self.dir_path}/{nameOfProjectDB}/{fileName}.csv", "w") as file:
                 for line in self.data[fileName]:
                     file.write(f"{','.join(line)}\n")
         self.clearTerm()
